@@ -1,7 +1,7 @@
 const NODE_ENV = process.env.NODE_ENV
 
 const sendErrorDev = (err, res) => {
-  res.status(500).json({
+  res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
     error: err,
@@ -10,7 +10,7 @@ const sendErrorDev = (err, res) => {
 }
 
 const sendErrorProd = (err, res) => {
-  res.status(500).json({
+  res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
   })
