@@ -7,6 +7,18 @@ import cors from 'cors';
 // import routes
 import authRoutes from './routes/auth.js';
 
+// import global controllers
+import globalErrorHandler from './controllers/globalErrorHandler.js';
+import notFound from './controllers/notFound.js';
+
+// uncaughtException are placed above other function 
+process.on('uncaughtException', (err) => {
+  console.log(err);
+  console.log('Server closed due to unhandled rejection');
+  // closing server with other request gracefully
+    process.exit(1);
+});
+
 dotenv.config();
 
 const app = express();
@@ -35,6 +47,18 @@ app.get('/api/v1', (req, res) => {
   res.json({ message: 'Hello World' });
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}...`));
+// all request handler (for 404)
+app.all('*', notFound);
 
-export default app;
+app.use(globalErrorHandler);
+
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}...`));
+
+process.on('unhandledRejection', (err) => {
+  console.log(err);
+  console.log('Server closed due to unhandled rejection');
+  // closing server with other request gracefully
+  server.close(() => {
+    process.exit(1);
+  })
+});
