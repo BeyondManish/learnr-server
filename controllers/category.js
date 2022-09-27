@@ -8,6 +8,7 @@ export const create = catchAsync(async (req, res, next) => {
   const {name}  = req.body;
   const slug = slugify(name).toLowerCase();
   const categoryExist = await Category.findOne({slug});
+
   // if category already exists
   if (categoryExist) {
     return next(new AppError("Category already exists.", 400));
