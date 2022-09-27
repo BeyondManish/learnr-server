@@ -6,6 +6,7 @@ import cors from 'cors';
 
 // import routes
 import authRoutes from './routes/auth.js';
+import categoryRoutes from './routes/category.js';
 
 // import global controllers
 import globalErrorHandler from './controllers/globalErrorHandler.js';
@@ -40,8 +41,8 @@ if (NODE_ENV === 'development') {
 }
 
 // routes
-
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1', categoryRoutes);
 
 app.get('/api/v1', (req, res) => {
   res.json({ message: 'Hello World' });
