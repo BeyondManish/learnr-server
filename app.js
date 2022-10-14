@@ -3,6 +3,10 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import connectDB from './db.js';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from 'xss-clean';
 
 // import routes
 import authRoutes from './routes/auth.js';
@@ -17,7 +21,7 @@ process.on('uncaughtException', (err) => {
   console.log(err);
   console.log('Server closed due to unhandled rejection');
   // closing server with other request gracefully
-    process.exit(1);
+  process.exit(1);
 });
 
 dotenv.config();
@@ -31,9 +35,21 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 // connect database (development or production)
 connectDB(NODE_ENV);
 
+const limiter = rateLimit({
+  max: 50,
+  windowMs: 10 * 60 * 1000,
+  message: "Too many request from this IP, please try again after 10 minutes"
+});
+
 // middlewares
+app.use(helmet()); // set security HTTP headers
+app.use('/api', limiter);
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: process.env.CLIENT_URL }));
+app.use(mongoSanitize());
+app.use(xss());
+
+// TODO: Protect against HTTP parameter pollution (hpp package and whitelist some api features) 
 
 // dev logging middleware
 if (NODE_ENV === 'development') {
@@ -61,5 +77,5 @@ process.on('unhandledRejection', (err) => {
   // closing server with other request gracefully
   server.close(() => {
     process.exit(1);
-  })
+  });
 });
