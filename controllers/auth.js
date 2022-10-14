@@ -9,7 +9,7 @@ const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 };
 
-const createAndSendToken = (user, statusCode, res) => {
+const createAndSendToken = (res, message, statusCode, user) => {
   const token = signToken(user._id);
   const cookieOptions = {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000), //convert into ms
@@ -24,7 +24,7 @@ const createAndSendToken = (user, statusCode, res) => {
 
   res.status(statusCode).json({
     status: 'success',
-    message: 'User created.',
+    message: message,
     token,
     data: {
       user,
@@ -51,7 +51,8 @@ export const signup = catchAsync(async (req, res, next) => {
 
   // create new user
   const user = await User.create({ firstname, lastname, username, email, password });
-  createAndSendToken(user, 201, res);
+  // takes in the response, message, status code, and user
+  createAndSendToken(res, "Registered Successfully", 201, user);
 });
 
 export const login = catchAsync(async (req, res, next) => {
@@ -69,7 +70,7 @@ export const login = catchAsync(async (req, res, next) => {
     // check if the password is correct
     const isCorrectPassword = await user.isCorrectPassword(password);
     if (isCorrectPassword) {
-      createAndSendToken(user, 200, res);
+      createAndSendToken(res, "Logged in successfully", 201, user);
     } else {
       return next(new AppError('Invalid email or password', 401));
     }
