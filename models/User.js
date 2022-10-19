@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema(
       unique: [true, 'Username already exists'],
       index: true,
     },
+    role: {
+      type: String,
+      enum: ["admin", "author", "subscriber"],
+      default: "subscriber"
+    },
     password: {
       type: String,
       required: true,
