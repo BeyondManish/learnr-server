@@ -103,3 +103,12 @@ export const requireLogin = async (req, res, next) => {
   req.user = currentUser;
   next();
 };
+
+export const isAdmin = (req, res, next) => {
+  const user = req.user;
+  if (user.role != "admin") {
+    return next(new AppError("Access Denied!", 403));
+  } else {
+    next();
+  }
+};
