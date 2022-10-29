@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { ObjectId } from "mongoose.Schema.Types";
 
 const postSchema = new mongoose.Schema(
   {
@@ -14,17 +13,16 @@ const postSchema = new mongoose.Schema(
     },
     content: {},
     author: {
-      type: ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    category: [{ type: ObjectId, ref: "Category", required: true }],
-    tags: [{ type: ObjectId, ref: "Tag", required: true }],
-    featuredImage: {
-      type: ObjectId,
-      ref: "Media",
-    },
-    published: {
+    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true }],
+    // featuredImage: {
+    //   type: ObjectId,
+    //   ref: "Media",
+    // },
+    isPublished: {
       type: Boolean,
       default: false,
     }
