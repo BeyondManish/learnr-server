@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { nanoid } from 'nanoid';
 import { promisify } from 'util';
 import User from '../models/User.js';
 import AppError from '../utils/AppError.js';
@@ -112,3 +113,20 @@ export const isAdmin = (req, res, next) => {
     next();
   }
 };
+
+export const resetPassword = catchAsync(async (req, res, next) => {
+  // get the email
+  const { email } = req.body;
+  // find the user from email
+  const user = await User.findOne({ email });
+  // user exists ? generate token and send to the user
+  if (!user) {
+    return next(new AppError("Email doesn't exist.", 400));
+  }
+  const resetPasswordToken = nanoid(6);
+  console.log(resetPasswordToken);
+  res.status(200).json({
+    status: "success",
+    message: "Password reset token sent."
+  });
+});
