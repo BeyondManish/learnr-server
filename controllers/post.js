@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 export const create = catchAsync(async (req, res) => {
   const { title, content, categories, isPublished } = req.body;
   const { _id } = req.user;
-  const slug = slugify(title) + '-' + nanoid(8);
+  const slug = (slugify(title) + '-' + nanoid(8)).toLowerCase();
 
 
   const post = await Post.create({ title, content, categories, isPublished, slug, author: _id });
