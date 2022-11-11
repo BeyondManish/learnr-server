@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import { nanoid } from 'nanoid';
+import Media from '../models/Media.js';
 
 const s3 = new AWS.S3(
   {
@@ -26,6 +27,17 @@ export const uploadImage = (req, res, next) => {
     if (err) {
       return res.status(500).json({ err });
     }
-    res.status(200).json({ url: data.Location });
+
+    const media = Media.create({
+      url: data.Location,
+      location: data.key,
+      fileName: data.key.split('/')[1],
+      fileType: data.key.split('.')[1],
+      postedBy: req.user._id
+    }).then(() => {
+      console.log("Uploaded successfully");
+    });
+
+    res.status(200).json({ url: data.Location, });
   });
 };

@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
-import { ObjectId } from 'mongoose.Schema.Types';
 
 const mediaSchema = new mongoose.Schema({
     url: String,
-    public_id: String,
+    location: String,
+    fileName: String,
+    fileType: String,
     postedBy: {
-        type: ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     }
 }, { timestamps: true });
