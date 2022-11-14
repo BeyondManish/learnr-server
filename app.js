@@ -12,7 +12,9 @@ import xss from 'xss-clean';
 import authRoutes from './routes/auth.js';
 import postRoutes from './routes/post.js';
 import categoryRoutes from './routes/category.js';
-import fileRoutes from './routes/files.js';
+import mediaRoutes from './routes/media.js';
+import userRoutes from './routes/user.js';
+import commentRoutes from './routes/comment.js';
 
 // import global controllers
 import globalErrorHandler from './controllers/globalErrorHandler.js';
@@ -62,7 +64,10 @@ if (NODE_ENV === 'development') {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/posts', postRoutes);
 app.use('/api/v1', categoryRoutes);
-app.use("/api/v1", fileRoutes);
+app.use("/api/v1", mediaRoutes);
+app.use("/api/v1", userRoutes);
+app.use("/api/v1", commentRoutes);
+
 
 app.get('/api/v1', (req, res) => {
   res.json({ message: 'Hello World' });
