@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk';
 import { nanoid } from 'nanoid';
 import Media from '../models/Media.js';
+import catchAsync from '../utils/catchAsync.js';
 
 const s3 = new AWS.S3(
   {
@@ -23,21 +24,31 @@ export const uploadImage = (req, res, next) => {
     ContentType: `image/${type}`
   };
 
-  s3.upload(params, (err, data) => {
+  s3.upload(params, async (err, data) => {
     if (err) {
       return res.status(500).json({ err });
     }
 
-    const media = Media.create({
+    const media = await Media.create({
       url: data.Location,
       location: data.key,
       fileName: data.key.split('/')[1],
       fileType: data.key.split('.')[1],
       postedBy: req.user._id
-    }).then(() => {
-      console.log("Uploaded successfully");
     });
+    console.log(media);
 
-    res.status(200).json({ url: data.Location, });
+    res.status(200).json({ media });
   });
 };
+
+export const loadAllMedias = catchAsync(async (req, res, next) => {
+  const medias = await Media.find();
+  res.status(200).json({ status: "success", message: "All media fetched", medias });
+});
+
+export const deleteImage = catchAsync(async (req, res) => {
+  const imageId = req.params.id;
+  await Media.findByIdAndDelete({ _id: imageId });
+  res.status(204).json({ status: "success", message: "Image deleted" });
+});
