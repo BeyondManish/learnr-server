@@ -18,10 +18,10 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
     categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true }],
-    // featuredImage: {
-    //   type: ObjectId,
-    //   ref: "Media",
-    // },
+    featuredImage: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Media",
+    },
     isPublished: {
       type: Boolean,
       default: false,
