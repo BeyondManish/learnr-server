@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { ObjectId } from "mongoose.Schema.Types";
 
 const commentSchema = new mongoose.Schema({
   content: {
@@ -8,12 +7,12 @@ const commentSchema = new mongoose.Schema({
     required: true,
     max: 20000,
   },
-  postedBy: {
-    type: ObjectId,
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
   post: {
-    type: ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Post",
   },
 });
