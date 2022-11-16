@@ -47,7 +47,9 @@ const limiter = rateLimit({
 
 // middlewares
 app.use(helmet()); // set security HTTP headers
-app.use('/api', limiter);
+
+// TODO: add limiter
+// app.use('/api', limiter);
 app.use(express.json({ limit: "5mb", type: "application/json" }));
 app.use(cors({ origin: process.env.CLIENT_URL }));
 app.use(mongoSanitize());
