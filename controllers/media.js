@@ -48,7 +48,23 @@ export const loadAllMedias = catchAsync(async (req, res, next) => {
 });
 
 export const deleteImage = catchAsync(async (req, res) => {
-  const imageId = req.params.id;
-  await Media.findByIdAndDelete({ _id: imageId });
-  res.status(204).json({ status: "success", message: "Image deleted" });
+  const id = req.params.id;
+  console.log(id);
+  Media.findOneAndDelete({ _id: id }, (err, data) => {
+    s3.deleteObject({
+      Bucket: 'learnrapp',
+      Key: data.location
+    }, async (err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Image deleted from s3 bucket");
+      }
+    });
+    if (err) {
+      console.log(err);
+    }
+  }
+  );
+  res.status(200).json({ status: "success", message: "Image deleted" });
 });
