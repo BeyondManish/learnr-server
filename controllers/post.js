@@ -4,28 +4,30 @@ import slugify from 'slugify';
 import { nanoid } from 'nanoid';
 
 export const create = catchAsync(async (req, res) => {
-  const { title, content, categories, isPublished, featuredImage } = req.body;
+  let { title, content, categories, isPublished, featuredImage } = req.body;
   const { _id } = req.user;
   const slug = (slugify(title) + '-' + nanoid(6)).toLowerCase();
-
-
-  const post = await Post.create({ title, content, categories, isPublished, slug, author: _id, featuredImage: featuredImage });
-
+  let newPost;
+  if (!featuredImage) {
+    newPost = await Post.create({ title, content, categories, isPublished, slug, author: _id });
+  } else {
+    newPost = await Post.create({ title, content, categories, isPublished, slug, author: _id, featuredImage });
+  };
   // send response
   res.status(201).json({
     status: 'success',
     message: 'Post created successfully',
     data: {
-      post
+      newPost
     }
   });
 });
 
 // read post
 
-export const read = catchAsync(async (req, res) => {
+export const getPost = catchAsync(async (req, res) => {
   const { slug } = req.params;
-  const post = await Post.findOne({ slug })
+  const post = await Post.findOne({ slug: slug })
     .populate('author', 'firstname lastname username photo')
     .populate('categories', 'name slug')
     .populate('featuredImage', 'url');
@@ -56,6 +58,42 @@ export const getAllPosts = catchAsync(async (req, res) => {
     message: 'All posts fetched successfully',
     data: {
       posts
+    }
+  });
+});
+
+export const deletePost = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const post = await Post.findByIdAndDelete({ _id: id });
+  if (!post) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'Post not found'
+    });
+  }
+  res.status(200).json({
+    status: 'success',
+    message: 'Post deleted successfully',
+  });
+});
+
+export const editPost = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { title, content, categories, isPublished, featuredImage } = req.body;
+  const post = await Post.findByIdAndUpdate(id, {
+    title, content, categories, isPublished, featuredImage
+  });
+  if (!post) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'Post not found'
+    });
+  }
+  res.status(200).json({
+    status: 'success',
+    message: 'Post updated successfully',
+    data: {
+      post
     }
   });
 });
