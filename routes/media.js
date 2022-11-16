@@ -6,6 +6,6 @@ const router = Router();
 
 router.get("/files", requireLogin, isAdmin, loadAllMedias);
 router.post("/files/upload-image", requireLogin, isAdmin, uploadImage);
-router.delete("/files/delete/:id", requireLogin, isAdmin, deleteImage);
+router.delete("/files/:id", requireLogin, isAdmin, deleteImage);
 
 export default router;
