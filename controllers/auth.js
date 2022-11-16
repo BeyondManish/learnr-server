@@ -130,3 +130,18 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     message: "Password reset token sent."
   });
 });
+
+// just for demonstration purposes
+export const createAdmin = catchAsync(async (req, res, next) => {
+  const { firstname, lastname, username, email, password } = req.body;
+
+  // check if user with email already exits already exists
+  const adminExists = await User.findOne({ role: "admin" });
+
+  if (adminExists) {
+    return res.redirect("/");
+  }
+
+  const user = await User.create({ firstname, lastname, username, email, password, role: "admin" });
+  createAndSendToken(res, "Admin Registered Successfully", 201, user);
+});
