@@ -53,8 +53,6 @@ app.use(cors({ origin: process.env.CLIENT_URL }));
 app.use(mongoSanitize());
 app.use(xss());
 
-// TODO: Protect against HTTP parameter pollution (hpp package and whitelist some api features) 
-
 // dev logging middleware
 if (NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -62,7 +60,7 @@ if (NODE_ENV === 'development') {
 
 // routes
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/posts', postRoutes);
+app.use('/api/v1', postRoutes);
 app.use('/api/v1', categoryRoutes);
 app.use("/api/v1", mediaRoutes);
 app.use("/api/v1", userRoutes);
