@@ -1,4 +1,5 @@
 import Post from '../models/Post.js';
+import Category from '../models/Category.js';
 import catchAsync from '../utils/catchAsync.js';
 import slugify from 'slugify';
 import { nanoid } from 'nanoid';
@@ -51,8 +52,10 @@ export const getPost = catchAsync(async (req, res) => {
 export const getAllPosts = catchAsync(async (req, res) => {
   const posts = await Post.find({})
     .populate('author', 'username firstname lastname photo')
-    .populate('categories', 'name slug').sort({ createdAt: -1 })
-    .populate('featuredImage', 'url');
+    .populate('categories', 'name slug')
+    .populate('featuredImage', 'url')
+    .sort({ createdAt: -1 });
+
   res.status(200).json({
     status: 'success',
     message: 'All posts fetched successfully',
@@ -94,6 +97,27 @@ export const editPost = catchAsync(async (req, res, next) => {
     message: 'Post updated successfully',
     data: {
       post
+    }
+  });
+});
+
+export const getCategoryPosts = catchAsync(async (req, res, next) => {
+  const { slug } = req.params;
+  const category = await Category.findOne({ slug });
+  const posts = await Post.find({ categories: category._id })
+    .populate('author', 'firstname lastname username photo')
+    .populate('categories', 'name slug')
+    .populate('featuredImage', 'url')
+    .sort({ createdAt: -1 });
+  if (!posts) {
+    return next(new AppError("No posts found", 404));
+  }
+  console.log(posts);
+  res.status(200).json({
+    status: 'success',
+    message: 'Posts fetched successfully',
+    data: {
+      posts, category
     }
   });
 });
