@@ -132,16 +132,39 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 });
 
 // just for demonstration purposes
+// TODO: Delete after the demonstration
 export const createAdmin = catchAsync(async (req, res, next) => {
-  const { firstname, lastname, username, email, password } = req.body;
 
   // check if user with email already exits already exists
   const adminExists = await User.findOne({ role: "admin" });
 
   if (adminExists) {
-    return res.redirect("/");
+    return next(new AppError('Admin already exists.', 400));
   }
+
+  // if the code above is executed, it means that the admin does not exist
+  const { firstname, lastname, username, email, password } = req.body;
 
   const user = await User.create({ firstname, lastname, username, email, password, role: "admin" });
   createAndSendToken(res, "Admin Registered Successfully", 201, user);
+});
+
+export const checkAdmin = catchAsync(async (req, res, next) => {
+  const admin = await User.findOne({ role: "admin" });
+  if (!admin) {
+    return res.status(200).json({
+      status: "success",
+      message: "Admin does not exist.",
+      data: {
+        hasAdmin: false
+      }
+    });
+  }
+  return res.status(200).json({
+    status: "success",
+    message: "Admin exists.",
+    data: {
+      hasAdmin: true
+    }
+  });
 });
