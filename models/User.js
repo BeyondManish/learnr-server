@@ -23,11 +23,12 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "author", "subscriber"],
-      default: "subscriber"
+      enum: ["admin", "author", "user"],
+      default: "user"
     },
     photo: {
       type: String,
+      default: "https://learnrapp.s3.amazonaws.com/default-images/default-profile.jpg"
     },
     password: {
       type: String,

@@ -168,3 +168,17 @@ export const checkAdmin = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+export const currentUser = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  if (!user) {
+    return next(new AppError("User does not exist.", 400));
+  }
+  return res.status(200).json({
+    status: "success",
+    message: "User found.",
+    data: {
+      user
+    }
+  });
+});
