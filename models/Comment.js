@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema({
-  content: {
+  comment: {
     type: String,
     trim: true,
     required: true,
@@ -15,7 +15,7 @@ const commentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Post",
   },
-});
+}, { timestamps: true });
 
 const Comment = mongoose.model("Comment", commentSchema);
 

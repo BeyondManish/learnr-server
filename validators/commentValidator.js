@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 
 const commentValidator = [
-  body("content").trim().not().isEmpty().withMessage("Comment content is required")
+  body("comment").trim().not().isEmpty().withMessage("Comment is required")
 ];
 
 export default commentValidator;
