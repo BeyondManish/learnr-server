@@ -15,6 +15,8 @@ import categoryRoutes from './routes/category.js';
 import mediaRoutes from './routes/media.js';
 import userRoutes from './routes/user.js';
 import commentRoutes from './routes/comment.js';
+import statsRoutes from './routes/stats.js';
+
 
 // import global controllers
 import globalErrorHandler from './controllers/globalErrorHandler.js';
@@ -67,6 +69,8 @@ app.use('/api/v1', categoryRoutes);
 app.use("/api/v1", mediaRoutes);
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", commentRoutes);
+app.use("/api/v1", statsRoutes);
+
 
 
 app.get('/api/v1', (req, res) => {
