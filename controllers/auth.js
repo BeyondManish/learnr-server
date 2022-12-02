@@ -182,3 +182,24 @@ export const currentUser = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+export const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('You do not have permission to perform this action', 403));
+    }
+    next();
+  };
+};
+
+export const isAuthor = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const post = await Post.findById(id);
+  if (!post) {
+    return next(new AppError("Post does not exist.", 400));
+  }
+  if (post.author != req.user.id) {
+    return next(new AppError("You are not the author of this post.", 403));
+  }
+  next();
+});

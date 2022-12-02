@@ -121,3 +121,18 @@ export const getCategoryPosts = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+export const getPosts = catchAsync(async (req, res, next) => {
+  const { _id } = req.user;
+  const posts = await Post.find({ author: _id });
+  if (!posts) {
+    return next(new AppError("No posts found", 404));
+  }
+  res.status(200).json({
+    status: 'success',
+    message: 'Posts fetched successfully',
+    data: {
+      posts
+    }
+  });
+});

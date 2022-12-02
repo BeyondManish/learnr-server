@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { requireLogin, isAdmin } from "../controllers/auth.js";
+import { requireLogin, isAdmin, restrictTo } from "../controllers/auth.js";
 import { getStats } from "../controllers/stats.js";
 
 
 const router = Router();
 
-router.get("/stats", requireLogin, isAdmin, getStats);
+router.get("/stats", requireLogin, restrictTo("admin", "author"), getStats);
 
 export default router;
