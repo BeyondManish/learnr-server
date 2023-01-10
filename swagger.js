@@ -9,8 +9,15 @@ const options = {
       title: 'Learnr API',
       version: '1.0.0',
     },
+    servers: [
+      {
+        url: 'http://localhost:8000/api/v1',
+        description: 'Development server',
+      },
+    ]
   },
-  apis: ['./server/models/*.js', './server/routes/*.js'],
+  apis: ['./models/*.js', './routes/*.js'],
+
 };
 
 const swaggerSpec = swaggerJSDoc(options);
