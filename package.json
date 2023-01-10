@@ -26,6 +26,8 @@
     "mongoose": "^6.6.1",
     "nanoid": "^4.0.0",
     "slugify": "^1.6.5",
+    "swagger-jsdoc": "^6.2.7",
+    "swagger-ui-express": "^4.6.0",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {

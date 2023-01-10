@@ -8,6 +8,10 @@ import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss-clean';
 
+// import documentation framework
+import swaggerDocs from './swagger.js';
+
+
 // import routes
 import authRoutes from './routes/auth.js';
 import postRoutes from './routes/post.js';
@@ -71,7 +75,8 @@ app.use("/api/v1", userRoutes);
 app.use("/api/v1", commentRoutes);
 app.use("/api/v1", statsRoutes);
 
-
+// documentation url (/docs)
+swaggerDocs(app, PORT);
 
 app.get('/api/v1', (req, res) => {
   res.json({ message: 'Hello World' });
