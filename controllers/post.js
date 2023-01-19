@@ -1,13 +1,12 @@
 import Post from '../models/Post.js';
 import Category from '../models/Category.js';
 import catchAsync from '../utils/catchAsync.js';
-import slugify from 'slugify';
-import { nanoid } from 'nanoid';
+import uniqueSlug from '../utils/uniqueSlug.js';
 
 export const create = catchAsync(async (req, res) => {
   let { title, content, categories, isPublished, featuredImage } = req.body;
   const { _id } = req.user;
-  const slug = (slugify(title) + '-' + nanoid(6)).toLowerCase();
+  const slug = uniqueSlug(title);
   let newPost;
   if (!featuredImage) {
     newPost = await Post.create({ title, content, categories, isPublished, slug, author: _id });
