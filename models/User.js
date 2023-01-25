@@ -1,6 +1,32 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    User:
+ *      type: object
+ *      required:
+ *        - email
+ *        - firstname
+ *        - lastname
+ *        - username
+ *      properties:
+ *        firstname:
+ *          type: string
+ *          default: Jane
+ *        lastname:
+ *          type: string
+ *          default: Doe
+ *        email: 
+ *          type: string
+ *          default: jane.doe@gmail.com
+ *        username:
+ *          type: string
+ *          default: JaneDoe
+ */
+
 const userSchema = new mongoose.Schema(
   {
     firstname: {
@@ -23,7 +49,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "author", "user"],
+      enum: ["user", "subscriber"],
       default: "user"
     },
     photo: {

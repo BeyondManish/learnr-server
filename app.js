@@ -20,6 +20,7 @@ import mediaRoutes from './routes/media.js';
 import userRoutes from './routes/user.js';
 import commentRoutes from './routes/comment.js';
 import statsRoutes from './routes/stats.js';
+import youtubeRoutes from './routes/youtube.js';
 
 
 // import global controllers
@@ -74,6 +75,7 @@ app.use("/api/v1", mediaRoutes);
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", commentRoutes);
 app.use("/api/v1", statsRoutes);
+app.use("/api/v1/youtube", youtubeRoutes);
 
 // documentation url (/docs)
 swaggerDocs(app, PORT);
