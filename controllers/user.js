@@ -14,9 +14,7 @@ export const getAllUsers = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "All users fetched",
-    data: {
-      users,
-    }
+    users
   });
 });
 
@@ -30,9 +28,7 @@ export const getUser = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "User fetched successfully",
-    data: {
-      user,
-    }
+    user
   });
 });
 
@@ -70,9 +66,7 @@ export const editUser = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "User updated successfully",
-    data: {
-      user,
-    }
+    user
   });
 });
 
@@ -93,9 +87,7 @@ export const updateUser = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "User updated successfully",
-    data: {
-      user,
-    }
+    user
   });
 });
 
@@ -110,6 +102,7 @@ export const getUserPosts = catchAsync(async (req, res, next) => {
     .populate("author", "firstname lastname username photo")
     .populate("featuredImage", "url")
     .populate("tags", "name slug");
+  console.log(posts);
   res.status(200).json({
     status: "success",
     message: "User posts fetched successfully",
