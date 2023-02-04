@@ -17,7 +17,7 @@ const postSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true }],
+    tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag", required: true }],
     featuredImage: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Media",
@@ -25,7 +25,11 @@ const postSchema = new mongoose.Schema(
     isPublished: {
       type: Boolean,
       default: false,
-    }
+    },
+    meta: {
+      title: String,
+      description: String,
+    },
   },
   { timestamps: true }
 );

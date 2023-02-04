@@ -109,12 +109,10 @@ export const getUserPosts = catchAsync(async (req, res, next) => {
   const posts = await Post.find({ author: user._id })
     .populate("author", "firstname lastname username photo")
     .populate("featuredImage", "url")
-    .populate("categories", "name slug");
+    .populate("tags", "name slug");
   res.status(200).json({
     status: "success",
     message: "User posts fetched successfully",
-    data: {
-      posts,
-    }
+    posts
   });
 });

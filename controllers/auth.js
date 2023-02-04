@@ -4,6 +4,7 @@ import { promisify } from 'util';
 import User from '../models/User.js';
 import AppError from '../utils/AppError.js';
 import catchAsync from '../utils/catchAsync.js';
+import Post from '../models/Post.js';
 // import { sendEmailOnRegister } from '../utils/sendEmail.js';
 
 const signToken = (id) => {
@@ -131,44 +132,6 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   });
 });
 
-// just for demonstration purposes
-// TODO: Delete after the demonstration
-export const createAdmin = catchAsync(async (req, res, next) => {
-
-  // check if user with email already exits already exists
-  const adminExists = await User.findOne({ role: "admin" });
-
-  if (adminExists) {
-    return next(new AppError('Admin already exists.', 400));
-  }
-
-  // if the code above is executed, it means that the admin does not exist
-  const { firstname, lastname, username, email, password } = req.body;
-
-  const user = await User.create({ firstname, lastname, username, email, password, role: "admin" });
-  createAndSendToken(res, "Admin Registered Successfully", 201, user);
-});
-
-export const checkAdmin = catchAsync(async (req, res, next) => {
-  const admin = await User.findOne({ role: "admin" });
-  if (!admin) {
-    return res.status(200).json({
-      status: "success",
-      message: "Admin does not exist.",
-      data: {
-        hasAdmin: false
-      }
-    });
-  }
-  return res.status(200).json({
-    status: "success",
-    message: "Admin exists.",
-    data: {
-      hasAdmin: true
-    }
-  });
-});
-
 export const currentUser = catchAsync(async (req, res, next) => {
   const user = req.user;
   if (!user) {
@@ -198,7 +161,7 @@ export const isAuthor = catchAsync(async (req, res, next) => {
   if (!post) {
     return next(new AppError("Post does not exist.", 400));
   }
-  if (post.author != req.user.id) {
+  if ((toString(post.author._id) != toString(req.user._id))) {
     return next(new AppError("You are not the author of this post.", 403));
   }
   next();
