@@ -15,7 +15,7 @@ import swaggerDocs from './swagger.js';
 // import routes
 import authRoutes from './routes/auth.js';
 import postRoutes from './routes/post.js';
-import categoryRoutes from './routes/category.js';
+import tagRoutes from './routes/tag.js';
 import mediaRoutes from './routes/media.js';
 import userRoutes from './routes/user.js';
 import commentRoutes from './routes/comment.js';
@@ -70,7 +70,7 @@ if (NODE_ENV === 'development') {
 // routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1', postRoutes);
-app.use('/api/v1', categoryRoutes);
+app.use('/api/v1', tagRoutes);
 app.use("/api/v1", mediaRoutes);
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", commentRoutes);

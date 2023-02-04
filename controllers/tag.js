@@ -56,12 +56,10 @@ export const remove = catchAsync(async (req, res, next) => {
 // get all categories
 
 export const getAllTags = catchAsync(async (req, res, next) => {
-  const categories = await Tag.find();
+  const tags = await Tag.find();
   res.status(200).json({
     status: "success",
-    message: "Categories fetched.",
-    data: {
-      categories
-    },
+    message: "Tag fetched.",
+    tags
   });
 });

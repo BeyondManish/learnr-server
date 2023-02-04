@@ -10,7 +10,10 @@ const tagSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-});
+  description: {
+    type: String,
+  },
+}, { timestamps: true });
 
 const Tag = mongoose.model("Tag", tagSchema);
 

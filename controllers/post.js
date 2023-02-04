@@ -1,25 +1,36 @@
+import slugify from 'slugify';
 import Post from '../models/Post.js';
-import Category from '../models/Category.js';
+import Tag from '../models/Tag.js';
 import catchAsync from '../utils/catchAsync.js';
 import uniqueSlug from '../utils/uniqueSlug.js';
 
 export const create = catchAsync(async (req, res) => {
-  let { title, content, categories, isPublished, featuredImage } = req.body;
+  let { title, content, tags, isPublished, featuredImage } = req.body;
   const { _id } = req.user;
   const slug = uniqueSlug(title);
+  let tagIds = [];
+  // handle tags
+  await Promise.all(tags.map(async (tag) => {
+    let tagExists = await Tag.findOne({ name: tag });
+    if (tagExists) {
+      tagIds.push(tagExists._id.toString());
+      console.log(tagIds);
+    } else {
+      await Tag.create({ name: tag, slug: slugify(tag).toLowerCase() }).then((newTag) => { tagIds.push(newTag._id.toString()); });
+    }
+  }));
+
   let newPost;
   if (!featuredImage) {
-    newPost = await Post.create({ title, content, categories, isPublished, slug, author: _id });
+    newPost = await Post.create({ title, content, tags: tagIds, isPublished, slug, author: _id });
   } else {
-    newPost = await Post.create({ title, content, categories, isPublished, slug, author: _id, featuredImage });
+    newPost = await Post.create({ title, content, tags: tagIds, isPublished, slug, author: _id, featuredImage });
   };
   // send response
-  res.status(201).json({
+  return res.status(201).json({
     status: 'success',
     message: 'Post created successfully',
-    data: {
-      newPost
-    }
+    post: newPost
   });
 });
 
@@ -27,9 +38,9 @@ export const create = catchAsync(async (req, res) => {
 
 export const getPost = catchAsync(async (req, res) => {
   const { slug } = req.params;
-  const post = await Post.findOne({ slug: slug })
+  const post = await Post.findOne({ slug })
     .populate('author', 'firstname lastname username photo')
-    .populate('categories', 'name slug')
+    .populate('tags', 'name slug')
     .populate('featuredImage', 'url');
   if (!post) {
     return res.status(404).json({
@@ -49,24 +60,31 @@ export const getPost = catchAsync(async (req, res) => {
 
 // get all post
 export const getAllPosts = catchAsync(async (req, res) => {
+  // pagination
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 10;
+  const skip = (page - 1) * limit;
+  const total = await Post.countDocuments();
+  const pages = Math.ceil(total / limit);
+
   const posts = await Post.find({})
     .populate('author', 'username firstname lastname photo')
-    .populate('categories', 'name slug')
+    .populate('tags', 'name slug')
     .populate('featuredImage', 'url')
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 }).limit(limit).skip(skip);
 
   res.status(200).json({
     status: 'success',
     message: 'All posts fetched successfully',
-    data: {
-      posts
-    }
+    posts,
+    page,
+    totalPages: pages,
   });
 });
 
 export const deletePost = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const post = await Post.findByIdAndDelete({ _id: id });
+  const { slug } = req.params;
+  const post = await Post.findByIdAndDelete({ slug });
   if (!post) {
     return res.status(404).json({
       status: 'error',
@@ -81,9 +99,10 @@ export const deletePost = catchAsync(async (req, res) => {
 
 export const editPost = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const { title, content, categories, isPublished, featuredImage } = req.body;
+  let { title, content, tags, isPublished, featuredImage } = req.body;
+  featuredImage = featuredImage ? featuredImage : null;
   const post = await Post.findByIdAndUpdate(id, {
-    title, content, categories, isPublished, featuredImage
+    title, content, tags, isPublished, featuredImage
   });
   if (!post) {
     return res.status(404).json({
@@ -100,12 +119,12 @@ export const editPost = catchAsync(async (req, res, next) => {
   });
 });
 
-export const getCategoryPosts = catchAsync(async (req, res, next) => {
+export const getTagPosts = catchAsync(async (req, res, next) => {
   const { slug } = req.params;
-  const category = await Category.findOne({ slug });
-  const posts = await Post.find({ categories: category._id })
+  const tag = await Tag.findOne({ slug });
+  const posts = await Post.find({ tags: tag._id })
     .populate('author', 'firstname lastname username photo')
-    .populate('categories', 'name slug')
+    .populate('tags', 'name slug')
     .populate('featuredImage', 'url')
     .sort({ createdAt: -1 });
   if (!posts) {
@@ -116,7 +135,7 @@ export const getCategoryPosts = catchAsync(async (req, res, next) => {
     status: 'success',
     message: 'Posts fetched successfully',
     data: {
-      posts, category
+      posts, tag
     }
   });
 });

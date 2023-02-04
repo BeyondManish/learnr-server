@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireLogin, isAdmin, restrictTo } from '../controllers/auth.js';
+import { requireLogin, restrictTo } from '../controllers/auth.js';
 import categoryValidator from '../validators/categoryValidator.js';
 import isValid from '../validators/validationResult.js';
 import { create, getAllTags } from '../controllers/tag.js';
