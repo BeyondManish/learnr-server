@@ -93,6 +93,13 @@ export const updateUser = catchAsync(async (req, res, next) => {
 
 // get user posts
 export const getUserPosts = catchAsync(async (req, res, next) => {
+  // pagination
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 10;
+  const skip = (page - 1) * limit;
+  const total = await Post.countDocuments();
+  const totalPages = Math.ceil(total / limit);
+
   const { username } = req.params;
   const user = await User.findOne({ username });
   if (!user) {
@@ -106,6 +113,8 @@ export const getUserPosts = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "User posts fetched successfully",
-    posts
+    posts,
+    page,
+    totalPages
   });
 });

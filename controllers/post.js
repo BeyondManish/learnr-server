@@ -65,7 +65,7 @@ export const getAllPosts = catchAsync(async (req, res) => {
   const limit = req.query.limit * 1 || 10;
   const skip = (page - 1) * limit;
   const total = await Post.countDocuments();
-  const pages = Math.ceil(total / limit);
+  const totalPages = Math.ceil(total / limit);
 
   const posts = await Post.find({})
     .populate('author', 'username firstname lastname photo')
@@ -78,7 +78,7 @@ export const getAllPosts = catchAsync(async (req, res) => {
     message: 'All posts fetched successfully',
     posts,
     page,
-    totalPages: pages,
+    totalPages,
   });
 });
 
