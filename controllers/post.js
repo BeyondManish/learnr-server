@@ -98,11 +98,24 @@ export const deletePost = catchAsync(async (req, res) => {
 });
 
 export const editPost = catchAsync(async (req, res, next) => {
+
   const { id } = req.params;
+  let tagIds = [];
+
   let { title, content, tags, isPublished, featuredImage } = req.body;
   featuredImage = featuredImage ? featuredImage : null;
+  // handle tags
+  await Promise.all(tags.map(async (tag) => {
+    let tagExists = await Tag.findOne({ name: tag });
+    if (tagExists) {
+      tagIds.push(tagExists._id.toString());
+    } else {
+      await Tag.create({ name: tag, slug: slugify(tag).toLowerCase() }).then((newTag) => { tagIds.push(newTag._id.toString()); });
+    }
+  }));
+  // update post
   const post = await Post.findByIdAndUpdate(id, {
-    title, content, tags, isPublished, featuredImage
+    title, content, tags: tagIds, isPublished, featuredImage
   });
   if (!post) {
     return res.status(404).json({
